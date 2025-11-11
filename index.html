@@ -1,339 +1,186 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ตารางเรียนเทอม 2 - วิศวกรรมคอมพิวเตอร์</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ตารางเรียน วิศวกรรมคอมพิวเตอร์</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #11172b;
+      --ink: #e7ecff;
+      --muted: #9bb0ff;
+      --accent: #2dd4bf;
+      --line: #1d2744;
+      --chip: #0ea5e9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 800px at 10% 0%, #0d1532 0%, var(--bg) 40%);
+      color: var(--ink);
+      font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", sans-serif;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    h1 {
+      font-size: clamp(20px, 4vw, 28px);
+      margin: 0 0 16px;
+      letter-spacing: .2px;
+    }
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+    .main-content {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 980px) {
+      .main-content { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .main-content { grid-template-columns: 1fr; }
+    }
 
-        .schedule-container {
-            width: 100%;
-            max-width: 1200px;
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .circuit-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.1;
-            background-image: 
-                radial-gradient(circle at 25% 25%, #fff 1px, transparent 1px),
-                radial-gradient(circle at 75% 75%, #fff 1px, transparent 1px),
-                linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 50%, transparent 60%);
-            background-size: 50px 50px, 50px 50px, 100px 100px;
-        }
-
-        .header {
-            text-align: center;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.2);
-            color: white;
-            position: relative;
-            z-index: 2;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            letter-spacing: 2px;
-        }
-
-        .header p {
-            font-size: 1.3em;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-
-        .main-content {
-            padding: 30px;
-            height: calc(100% - 140px);
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-            position: relative;
-            z-index: 2;
-        }
-
-        .day-column {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .day-column:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        }
-
-        .day-column::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .day-header {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .day-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .day-column:hover .day-header::before {
-            left: 100%;
-        }
-
-        .class-item {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            border-left: 5px solid #667eea;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .class-item:hover {
-            transform: translateX(5px);
-            border-left-color: #e74c3c;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .class-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .time {
-            font-weight: bold;
-            color: #2c3e50;
-            font-size: 1em;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-        }
-
-        .time::before {
-            content: "⏰";
-            margin-right: 8px;
-            font-size: 1.1em;
-        }
-
-        .course-code {
-            font-weight: bold;
-            color: #e74c3c;
-            font-size: 0.8em;
-            margin-bottom: 5px;
-            background: rgba(231, 76, 60, 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .course-name {
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-            line-height: 1.3;
-        }
-
-        .instructor {
-            color: #7f8c8d;
-            font-size: 0.8em;
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .instructor::before {
-            content: "👨‍🏫";
-            margin-right: 5px;
-        }
-
-        .location {
-            color: #27ae60;
-            font-size: 0.8em;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-        }
-
-        .location::before {
-            content: "📍";
-            margin-right: 5px;
-        }
-
-        .empty-day {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #bdc3c7;
-            font-style: italic;
-            font-size: 0.9em;
-            height: 100px;
-        }
-
-        .tech-accent {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-
-        @media (max-width: 1024px) {
-            .main-content {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 15px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            .schedule-container {
-                aspect-ratio: auto;
-                min-height: 100vh;
-            }
-        }
-    </style>
+    .day-column {
+      background: linear-gradient(180deg, rgba(45,212,191,.08), transparent 45%), var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .day-header {
+      font-weight: 700;
+      font-size: 18px;
+      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .day-header::before {
+      content: "";
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+    .class-item {
+      background: rgba(13,19,40,.55);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .time {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .course-code {
+      display: inline-block;
+      background: rgba(14,165,233,.18);
+      border: 1px solid rgba(14,165,233,.35);
+      color: #cfeaff;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 2px 8px;
+      margin-bottom: 6px;
+    }
+    .course-name { font-weight: 600; }
+    .instructor, .location { color: var(--muted); font-size: 14px; }
+    .tech-accent {
+      position: absolute; inset: auto -20% -40% -20%;
+      height: 120px;
+      background: radial-gradient(40% 60% at 50% 0%, rgba(45,212,191,.10), transparent 70%);
+      pointer-events: none;
+    }
+    .legend {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin: 10px 0 0; color: var(--muted); font-size: 13px;
+    }
+    .chip { border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; }
+  </style>
 </head>
 <body>
-    <div class="schedule-container">
-        <div class="circuit-bg"></div>
-        
-        <div class="header">
-            <h1>ตารางเรียนเทอม 2</h1>
-            <p>วิศวกรรมคอมพิวเตอร์</p>
+  <div class="wrap">
+    <h1>ตารางเรียน วิศวกรรมคอมพิวเตอร์</h1>
+    
+
+    <div class="main-content">
+      <!-- จันทร์ -->
+      <div class="day-column">
+        <div class="day-header">จันทร์</div>
+        <div class="class-item">
+          <div class="time">08:00 - 13:05</div>
+          <div class="course-code">04517302</div>
+          <div class="course-name">เครือข่ายคอมพิวเตอร์ขั้นสูง</div>
+          <div class="instructor">อ.ชัยสิทธิ์ ชูสงค์</div>
+          <div class="location">ห้อง 18401 ชั้น 4</div>
         </div>
-        
-        <div class="main-content">
-            <!-- จันทร์ -->
-            <div class="day-column">
-                <div class="day-header">จันทร์</div>
-                <div class="class-item">
-                    <div class="time">08:00 - 13:05</div>
-                    <div class="course-code">04517302</div>
-                    <div class="course-name">เครือข่ายคอมพิวเตอร์ขั้นสูง</div>
-                    <div class="instructor">อ.ชัยสิทธิ์ ชูสงค์</div>
-                    <div class="location">ห้อง 18401 ชั้น 4 </div>
-                </div>
-            
-                <div class="tech-accent"></div>
-            </div>
+        <div class="tech-accent"></div>
+      </div>
 
-            <!-- อังคาร -->
-            <div class="day-column">
-                <div class="day-header">อังคาร</div>
-                <div class="class-item">
-                    <div class="time">08:00 - 13:05</div>
-                    <div class="course-code">04517303</div>
-                    <div class="course-name">การคำนวณแบบกลุ่มเมฆ</div>
-                    <div class="instructor">อ.ชัยสิทธิ์ ชูสงค์</div>
-                    <div class="location">ห้อง 18401 ชั้น 4 </div>
-                </div>
-                <div class="tech-accent"></div>
-            </div>
-
-           
-
-            <!-- พฤหัสบดี -->
-            <div class="day-column">
-                <div class="day-header">พุธ</div>
-                <div class="class-item">
-                    <div class="time">10:05 - 12:05</div>
-                    <div class="course-code">04519402</div>
-                    <div class="course-name">การเตรียมความพร้อมการฝึกงานและสหกิจศึกษา</div>
-                    <div class="instructor">ผศ.ดร.เกสรา เพชรกระจ่าง</div>
-                    <div class="location">ห้อง 18203 ชั้น 2</div>
-                </div>
-                <div class="class-item">
-                    <div class="time">13:05 - 20:10</div>
-                    <div class="course-code">04511409</div>
-                    <div class="course-name">โครงงานวิศวกรรมคอมพิวเตอร์ </div>
-                    <div class="instructor">ดร.พงศกร เจริญเนตรกุล</div>
-                    <div class="location">ห้อง 18404 ชั้น 4</div>
-                </div>
-                <div class="tech-accent"></div>
-            </div>
-
-             <div class="day-column">
-                <div class="day-header">ศุกร์</div>
-                <div class="class-item">
-                    <div class="time">08:00 - 13:05</div>
-                    <div class="course-code">04517301</div>
-                    <div class="course-name">ความปลอดภัยในระบบเครือข่าย</div>
-                    <div class="instructor">อ.ชัยสิทธิ์ ชูสงค์</div>
-                    <div class="location">ห้อง 18401 ชั้น 4 </div>
-                </div>
-                <div class="tech-accent"></div>
-            </div>
-          
+      <!-- อังคาร -->
+      <div class="day-column">
+        <div class="day-header">อังคาร</div>
+        <div class="class-item">
+          <div class="time">08:00 - 13:05</div>
+          <div class="course-code">04517303</div>
+          <div class="course-name">การคำนวณแบบกลุ่มเมฆ</div>
+          <div class="instructor">อ.ชัยสิทธิ์ ชูสงค์</div>
+          <div class="location">ห้อง 18401 ชั้น 4</div>
         </div>
+        <div class="tech-accent"></div>
+      </div>
+
+      <!-- พุธ -->
+      <div class="day-column">
+        <div class="day-header">พุธ</div>
+        <div class="class-item">
+          <div class="time">10:05 - 12:05</div>
+          <div class="course-code">04519402</div>
+          <div class="course-name">การเตรียมความพร้อมการฝึกงานและสหกิจศึกษา</div>
+          <div class="instructor">ผศ.ดร.เกสรา เพชรกระจ่าง</div>
+          <div class="location">ห้อง 18203 ชั้น 2</div>
+        </div>
+        <div class="class-item">
+          <div class="time">13:05 - 20:10</div>
+          <div class="course-code">04511409</div>
+          <div class="course-name">โครงงานวิศวกรรมคอมพิวเตอร์</div>
+          <div class="instructor">ดร.พงศกร เจริญเนตรกุล</div>
+          <div class="location">ห้อง 18404 ชั้น 4</div>
+        </div>
+        <div class="tech-accent"></div>
+      </div>
+
+      <!-- ศุกร์ -->
+      <div class="day-column">
+        <div class="day-header">ศุกร์</div>
+        <div class="class-item">
+          <div class="time">08:00 - 13:05</div>
+          <div class="course-code">04517301</div>
+          <div class="course-name">ความปลอดภัยในระบบเครือข่าย</div>
+          <div class="instructor">ดร.อรรถพล คงหวาน</div>
+          <div class="location">ห้อง 18401 ชั้น 4</div>
+        </div>
+        <div class="tech-accent"></div>
+      </div>
     </div>
+
+    <div class="legend">
+      <span class="chip">📍 อาคารวิศวกรรมคอมพิวเตอร์</span>
+    </div>
+  </div>
+
+  <script>
+    // แสดงค่า LEAD_MINUTES จากฝั่ง Apps Script (หากอยากส่งมากับ template)
+    // ตอนนี้ฮาร์ดโค้ด 10 ไว้ใน DOM
+  </script>
 </body>
 </html>
